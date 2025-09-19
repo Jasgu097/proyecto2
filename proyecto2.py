@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 class HashTable:
-    """Implementación de tabla hash con encadenamiento"""
+    """Implementacion de tabla hash con encadenamiento"""
 
     def __init__(self, size=100):
         self.size = size
@@ -15,7 +15,7 @@ class HashTable:
         self.count = 0
 
     def _hash(self, key):
-        """Función hash usando método de división"""
+        """Funcion hash usando metodo de division"""
         return hash(key) % self.size
 
     def insert(self, key, value):
@@ -69,7 +69,7 @@ class HashTable:
 
 
 class Articulo:
-    """Clase para representar un artículo científico"""
+    """Clase para representar un artículo cientifico"""
 
     def __init__(self, hash_id, titulo, autores, año, archivo_nombre):
         self.hash_id = hash_id
@@ -83,23 +83,23 @@ class Articulo:
 
 
 class GestorArticulos:
-    """Gestor principal de artículos científicos"""
+    """Gestor principal de articulos cientificos"""
 
     def __init__(self):
         self.tabla_hash = HashTable(200)  # Tabla hash principal
-        self.indice_autores = defaultdict(list)  # Índice secundario por autor
-        self.indice_años = defaultdict(list)  # Índice secundario por año
+        self.indice_autores = defaultdict(list)  # Indice secundario por autor
+        self.indice_años = defaultdict(list)  # Indice secundario por año
         self.db_file = "articulos_db.txt"
         self.articulos_dir = "articulos"
 
-        # Crear directorio de artículos si no existe
+        # Crear directorio de articulos si no existe
         if not os.path.exists(self.articulos_dir):
             os.makedirs(self.articulos_dir)
 
         self.cargar_base_datos()
 
     def calcular_hash_fnv1(self, contenido):
-        """Implementación del algoritmo FNV-1 para generar hash"""
+        """Implementacion del algoritmo FNV-1 para generar hash"""
         FNV_PRIME = 16777619
         FNV_OFFSET_BASIS = 2166136261
 
@@ -111,7 +111,7 @@ class GestorArticulos:
         return str(hash_value)
 
     def cargar_base_datos(self):
-        """Cargar artículos desde el archivo de base de datos"""
+        """Cargar articulos desde el archivo de base de datos"""
         if not os.path.exists(self.db_file):
             return
 
@@ -127,14 +127,14 @@ class GestorArticulos:
                             # Insertar en tabla hash principal
                             self.tabla_hash.insert(hash_id, articulo)
 
-                            # Actualizar índices secundarios
+                            # Actualizar indices secundarios
                             self.indice_autores[autores.lower()].append(articulo)
                             self.indice_años[int(año)].append(articulo)
         except Exception as e:
             print(f"Error al cargar base de datos: {e}")
 
     def guardar_base_datos(self):
-        """Guardar artículos en el archivo de base de datos"""
+        """Guardar articulos en el archivo de base de datos"""
         try:
             with open(self.db_file, 'w', encoding='utf-8') as file:
                 articulos = self.tabla_hash.get_all_values()
@@ -145,7 +145,7 @@ class GestorArticulos:
             print(f"Error al guardar base de datos: {e}")
 
     def agregar_articulo(self, titulo, autores, año, ruta_archivo):
-        """Agregar nuevo artículo al sistema"""
+        """Agregar nuevo articulo al sistema"""
         try:
             # Leer contenido del archivo
             with open(ruta_archivo, 'r', encoding='utf-8') as file:
@@ -156,7 +156,7 @@ class GestorArticulos:
 
             # Verificar duplicados
             if self.tabla_hash.exists(hash_id):
-                return False, "El artículo ya existe en el sistema"
+                return False, "El articulo ya existe en el sistema"
 
             # Crear nombre de archivo basado en hash
             archivo_nombre = f"{hash_id}.txt"
@@ -172,7 +172,7 @@ class GestorArticulos:
             # Insertar en tabla hash principal
             self.tabla_hash.insert(hash_id, articulo)
 
-            # Actualizar índices secundarios
+            # Actualizar indices secundarios
             self.indice_autores[autores.lower()].append(articulo)
             self.indice_años[año].append(articulo)
 
@@ -185,13 +185,13 @@ class GestorArticulos:
             return False, f"Error al agregar artículo: {e}"
 
     def modificar_articulo(self, hash_id, nuevo_autor=None, nuevo_año=None):
-        """Modificar datos de un artículo existente"""
+        """Modificar datos de un articulo existente"""
         articulo = self.tabla_hash.get(hash_id)
         if not articulo:
             return False, "Artículo no encontrado"
 
         try:
-            # Remover de índices antiguos
+            # Remover de indices antiguos
             if articulo.autores.lower() in self.indice_autores:
                 self.indice_autores[articulo.autores.lower()].remove(articulo)
             if articulo.año in self.indice_años:
@@ -203,23 +203,23 @@ class GestorArticulos:
             if nuevo_año:
                 articulo.año = nuevo_año
 
-            # Agregar a nuevos índices
+            # Agregar a nuevos indices
             self.indice_autores[articulo.autores.lower()].append(articulo)
             self.indice_años[articulo.año].append(articulo)
 
             # Guardar cambios
             self.guardar_base_datos()
 
-            return True, "Artículo modificado exitosamente"
+            return True, "Articulo modificado exitosamente"
 
         except Exception as e:
-            return False, f"Error al modificar artículo: {e}"
+            return False, f"Error al modificar articulo: {e}"
 
     def eliminar_articulo(self, hash_id):
         """Eliminar un artículo del sistema"""
         articulo = self.tabla_hash.get(hash_id)
         if not articulo:
-            return False, "Artículo no encontrado"
+            return False, "Articulo no encontrado"
 
         try:
             # Eliminar archivo físico
@@ -227,7 +227,7 @@ class GestorArticulos:
             if os.path.exists(ruta_archivo):
                 os.remove(ruta_archivo)
 
-            # Remover de índices
+            # Remover de indices
             if articulo.autores.lower() in self.indice_autores:
                 self.indice_autores[articulo.autores.lower()].remove(articulo)
             if articulo.año in self.indice_años:
@@ -245,28 +245,28 @@ class GestorArticulos:
             return False, f"Error al eliminar artículo: {e}"
 
     def buscar_por_autor(self, autor):
-        """Buscar artículos por autor"""
+        """Buscar articulos por autor"""
         return sorted(self.indice_autores.get(autor.lower(), []),
                       key=lambda x: x.titulo.lower())
 
     def buscar_por_año(self, año):
-        """Buscar artículos por año"""
+        """Buscar articulos por año"""
         return sorted(self.indice_años.get(año, []),
                       key=lambda x: x.titulo.lower())
 
     def listar_por_titulo(self):
-        """Listar todos los artículos ordenados por título"""
+        """Listar todos los articulos ordenados por titulo"""
         articulos = self.tabla_hash.get_all_values()
         return sorted(articulos, key=lambda x: x.titulo.lower())
 
     def listar_por_autor(self):
-        """Listar todos los artículos ordenados por autor"""
+        """Listar todos los articulos ordenados por autor"""
         articulos = self.tabla_hash.get_all_values()
         return sorted(articulos, key=lambda x: x.autores.lower())
 
 
 class InterfazGrafica:
-    """Interfaz gráfica principal usando Tkinter"""
+    """Interfaz grafica principal usando Tkinter"""
 
     def __init__(self):
         self.gestor = GestorArticulos()
@@ -282,23 +282,23 @@ class InterfazGrafica:
         notebook = ttk.Notebook(self.root)
         notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        # Pestaña para agregar artículos
+        # Pestaña para agregar articulos
         self.frame_agregar = ttk.Frame(notebook)
         notebook.add(self.frame_agregar, text="Agregar Artículo")
         self.setup_agregar_tab()
 
-        # Pestaña para buscar artículos
+        # Pestaña para buscar articulos
         self.frame_buscar = ttk.Frame(notebook)
         notebook.add(self.frame_buscar, text="Buscar Artículos")
         self.setup_buscar_tab()
 
-        # Pestaña para gestionar artículos
+        # Pestaña para gestionar articulos
         self.frame_gestionar = ttk.Frame(notebook)
         notebook.add(self.frame_gestionar, text="Gestionar Artículos")
         self.setup_gestionar_tab()
 
     def setup_agregar_tab(self):
-        """Configurar pestaña para agregar artículos"""
+        """Configurar pestaña para agregar articulos"""
         # Frame principal
         main_frame = ttk.Frame(self.frame_agregar)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
@@ -316,7 +316,7 @@ class InterfazGrafica:
         self.entry_año = ttk.Entry(main_frame, width=20)
         self.entry_año.grid(row=2, column=1, sticky=tk.W, pady=5, padx=(10, 0))
 
-        # Selección de archivo
+        # Seleccion de archivo
         ttk.Label(main_frame, text="Archivo:").grid(row=3, column=0, sticky=tk.W, pady=5)
         archivo_frame = ttk.Frame(main_frame)
         archivo_frame.grid(row=3, column=1, sticky=tk.W, pady=5, padx=(10, 0))
@@ -327,18 +327,18 @@ class InterfazGrafica:
         ttk.Button(archivo_frame, text="Seleccionar Archivo",
                    command=self.seleccionar_archivo).pack(side=tk.LEFT, padx=(10, 0))
 
-        # Botón agregar
+        # Boton agregar
         ttk.Button(main_frame, text="Agregar Artículo",
                    command=self.agregar_articulo).grid(row=4, column=1, pady=20, sticky=tk.W, padx=(10, 0))
 
         self.archivo_seleccionado = None
 
     def setup_buscar_tab(self):
-        """Configurar pestaña para buscar artículos"""
+        """Configurar pestaña para buscar articulos"""
         main_frame = ttk.Frame(self.frame_buscar)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        # Opciones de búsqueda
+        # Opciones de busqueda
         search_frame = ttk.LabelFrame(main_frame, text="Opciones de Búsqueda")
         search_frame.pack(fill=tk.X, pady=(0, 10))
 
@@ -347,7 +347,7 @@ class InterfazGrafica:
         ttk.Button(search_frame, text="Listar por Autor",
                    command=self.listar_por_autor).pack(side=tk.LEFT, padx=5, pady=5)
 
-        # Búsqueda específica
+        # Busqueda especifica
         busqueda_frame = ttk.LabelFrame(main_frame, text="Búsqueda Específica")
         busqueda_frame.pack(fill=tk.X, pady=(0, 10))
 
@@ -380,11 +380,11 @@ class InterfazGrafica:
         self.tree_resultados.configure(yscrollcommand=scrollbar.set)
 
     def setup_gestionar_tab(self):
-        """Configurar pestaña para gestionar artículos"""
+        """Configurar pestaña para gestionar articulos"""
         main_frame = ttk.Frame(self.frame_gestionar)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        # Selección de artículo
+        # Seleccion de articulo
         select_frame = ttk.LabelFrame(main_frame, text="Seleccionar Artículo")
         select_frame.pack(fill=tk.X, pady=(0, 10))
 
@@ -394,7 +394,7 @@ class InterfazGrafica:
         ttk.Button(select_frame, text="Cargar",
                    command=self.cargar_articulo).grid(row=0, column=2, padx=5, pady=5)
 
-        # Modificación
+        # Modificacion
         modify_frame = ttk.LabelFrame(main_frame, text="Modificar Artículo")
         modify_frame.pack(fill=tk.X, pady=(0, 10))
 
@@ -409,7 +409,7 @@ class InterfazGrafica:
         ttk.Button(modify_frame, text="Modificar",
                    command=self.modificar_articulo).grid(row=2, column=1, sticky=tk.W, pady=10, padx=5)
 
-        # Eliminación
+        # Eliminacion
         delete_frame = ttk.LabelFrame(main_frame, text="Eliminar Artículo")
         delete_frame.pack(fill=tk.X)
 
@@ -427,7 +427,7 @@ class InterfazGrafica:
             self.label_archivo.config(text=os.path.basename(filename))
 
     def agregar_articulo(self):
-        """Agregar nuevo artículo"""
+        """Agregar nuevo articulo"""
         titulo = self.entry_titulo.get().strip()
         autores = self.entry_autores.get().strip()
         año_str = self.entry_año.get().strip()
@@ -456,7 +456,7 @@ class InterfazGrafica:
             messagebox.showerror("Error", mensaje)
 
     def listar_por_titulo(self):
-        """Listar artículos por título"""
+        """Listar artículos por titulo"""
         self.tree_resultados.delete(*self.tree_resultados.get_children())
         articulos = self.gestor.listar_por_titulo()
         for articulo in articulos:
@@ -465,7 +465,7 @@ class InterfazGrafica:
             ))
 
     def listar_por_autor(self):
-        """Listar artículos por autor"""
+        """Listar articulos por autor"""
         self.tree_resultados.delete(*self.tree_resultados.get_children())
         articulos = self.gestor.listar_por_autor()
         for articulo in articulos:
@@ -474,7 +474,7 @@ class InterfazGrafica:
             ))
 
     def buscar_por_autor(self):
-        """Buscar artículos por autor"""
+        """Buscar articulos por autor"""
         autor = self.entry_buscar_autor.get().strip()
         if not autor:
             messagebox.showerror("Error", "Ingrese un autor para buscar")
@@ -491,7 +491,7 @@ class InterfazGrafica:
             messagebox.showinfo("Resultado", f"No se encontraron artículos del autor: {autor}")
 
     def buscar_por_año(self):
-        """Buscar artículos por año"""
+        """Buscar articulos por año"""
         año_str = self.entry_buscar_año.get().strip()
         if not año_str:
             messagebox.showerror("Error", "Ingrese un año para buscar")
@@ -514,7 +514,7 @@ class InterfazGrafica:
             messagebox.showinfo("Resultado", f"No se encontraron artículos del año: {año}")
 
     def cargar_articulo(self):
-        """Cargar datos de un artículo para modificación"""
+        """Cargar datos de un articulo para modificacion"""
         hash_id = self.entry_hash_gestionar.get().strip()
         if not hash_id:
             messagebox.showerror("Error", "Ingrese un Hash ID")
@@ -531,7 +531,7 @@ class InterfazGrafica:
             messagebox.showerror("Error", "Artículo no encontrado")
 
     def modificar_articulo(self):
-        """Modificar un artículo existente"""
+        """Modificar un articulo existente"""
         hash_id = self.entry_hash_gestionar.get().strip()
         nuevo_autor = self.entry_nuevo_autor.get().strip()
         nuevo_año_str = self.entry_nuevo_año.get().strip()
@@ -558,7 +558,7 @@ class InterfazGrafica:
             messagebox.showerror("Error", mensaje)
 
     def eliminar_articulo(self):
-        """Eliminar un artículo"""
+        """Eliminar un articulo"""
         hash_id = self.entry_hash_gestionar.get().strip()
         if not hash_id:
             messagebox.showerror("Error", "Ingrese un Hash ID")
@@ -577,11 +577,11 @@ class InterfazGrafica:
                 messagebox.showerror("Error", mensaje)
 
     def run(self):
-        """Ejecutar la interfaz gráfica"""
+        """Ejecutar la interfaz grafica"""
         self.root.mainloop()
 
 
-# Función principal
+# Funcion principal
 if __name__ == "__main__":
     app = InterfazGrafica()
     app.run()
